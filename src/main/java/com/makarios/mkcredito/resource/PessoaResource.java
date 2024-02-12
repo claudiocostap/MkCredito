@@ -35,10 +35,12 @@ public class PessoaResource {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(pessoaSalva);
     }
+
     @GetMapping
     public List<Pessoa> listar() {
         return pessoaRepository.findAll();
     }
+
     @GetMapping("/{codigo}")
     public ResponseEntity<Pessoa> buscarPeloCodigo(@PathVariable Long codigo) {
         Optional<Pessoa> pessoa = pessoaRepository.findById(codigo);
