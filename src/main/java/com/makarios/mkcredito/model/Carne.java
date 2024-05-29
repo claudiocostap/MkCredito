@@ -1,24 +1,44 @@
 package com.makarios.mkcredito.model;
 
-import java.util.Date;
+import jakarta.persistence.*;
 
+import java.util.Date;
+import java.util.Objects;
+
+@Entity
+@Table(name = "carne")
 public class Carne {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private int numero;
     private String nomeCliente;
     private Date dataVencimento;
     private double valor;
 
-    // Construtor
-    public Carne(int numero, String nomeCliente, Date dataVencimento, double valor) {
-        this.numero = numero;
-        this.nomeCliente = nomeCliente;
-        this.dataVencimento = dataVencimento;
-        this.valor = valor;
-    }
-
-    // Métodos getters e setters
     public int getNumero() {
         return numero;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Carne carne = (Carne) o;
+        return id == carne.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setNumero(int numero) {
@@ -49,14 +69,4 @@ public class Carne {
         this.valor = valor;
     }
 
-    // Método toString para exibir informações sobre o carnê
-    @Override
-    public String toString() {
-        return "Carne{" +
-                "numero=" + numero +
-                ", nomeCliente='" + nomeCliente + '\'' +
-                ", dataVencimento=" + dataVencimento +
-                ", valor=" + valor +
-                '}';
-    }
 }
