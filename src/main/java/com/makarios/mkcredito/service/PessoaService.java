@@ -1,12 +1,13 @@
 package com.makarios.mkcredito.service;
 
-
 import com.makarios.mkcredito.model.Pessoa;
 import com.makarios.mkcredito.repository.PessoaRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PessoaService {
@@ -14,23 +15,79 @@ public class PessoaService {
     @Autowired
     private PessoaRepository pessoaRepository;
 
-    public Pessoa atualizar(Long codigo, Pessoa pessoa) {
-        Pessoa pessoaSalva = buscarPessoaPeloCodigo(codigo);
-
-        BeanUtils.copyProperties(pessoa, pessoaSalva, "codigo");
-        return pessoaRepository.save(pessoaSalva);
+    // Buscar todas as pessoas no banco de dados
+    public List<Pessoa> buscarTodas() {
+        return pessoaRepository.findAll();
     }
 
-    public void atualizarPropriedadeAtivo(Long codigo, Boolean ativo) {
-        Pessoa pessoaSalva = buscarPessoaPeloCodigo(codigo);
-        pessoaSalva.setAtivo(ativo);
-        pessoaRepository.save(pessoaSalva);
+    // Buscar pessoa por ID
+    public Optional<Pessoa> buscarPorId(Long id) {
+        return pessoaRepository.findById(id);
     }
 
-    private Pessoa buscarPessoaPeloCodigo(Long codigo) {
-        Pessoa pessoaSalva = pessoaRepository.findById(codigo)
-                .orElseThrow(() -> new EmptyResultDataAccessException(1));
-        return pessoaSalva;
+    // Salvar uma nova pessoa
+    @Transactional
+    public Pessoa salvar(Pessoa pessoa) {
+        validarPessoa(pessoa);
+        return pessoaRepository.save(pessoa);
     }
 
+    // Atualizar uma pessoa existente
+    @Transactional
+    public Pessoa atualizar(Long id, Pessoa pessoaAtualizada) {
+        Optional<Pessoa> pessoaExistente = pessoaRepository.findById(id);
+
+        if (!pessoaExistente.isPresent()) {
+            throw new IllegalArgumentException("Pessoa com ID " + id + " não encontrada.");
+        }
+
+        // Mantém o ID da pessoa original para garantir que estamos atualizando o registro correto
+        Pessoa pessoa = pessoaExistente.get();
+        pessoa.setNome(pessoaAtualizada.getNome());
+        pessoa.setCpf(pessoaAtualizada.getCpf());
+        pessoa.setRg(pessoaAtualizada.getRg());
+        pessoa.setDataNascimento(pessoaAtualizada.getDataNascimento());
+        pessoa.setEndereco(pessoaAtualizada.getEndereco());
+        pessoa.setAtivo(pessoaAtualizada.getAtivo());
+
+        return pessoaRepository.save(pessoa);
+    }
+
+    // Remover uma pessoa pelo ID
+    @Transactional
+    public void remover(Long id) {
+        Optional<Pessoa> pessoaExistente = pessoaRepository.findById(id);
+
+        if (pessoaExistente.isEmpty()) {
+            throw new IllegalArgumentException("Pessoa com ID " + id + " não encontrada.");
+        }
+
+        pessoaRepository.deleteById(id);
+    }
+
+    // Buscar pessoa por CPF
+    public Optional<Pessoa> buscarPorCpf(String cpf) {
+        return pessoaRepository.findByCpf(cpf);
+    }
+
+    // Buscar pessoa por nome (ou parte do nome)
+    public List<Pessoa> buscarPorNome(String nome) {
+        return pessoaRepository.findByNomeContainingIgnoreCase(nome);
+    }
+
+    // Validação básica antes de salvar/atualizar a pessoa
+    private void validarPessoa(Pessoa pessoa) {
+        if (pessoa.getCpf() == null || pessoa.getCpf().isEmpty()) {
+            throw new IllegalArgumentException("CPF é obrigatório.");
+        }
+
+        if (pessoa.getNome() == null || pessoa.getNome().isEmpty()) {
+            throw new IllegalArgumentException("Nome é obrigatório.");
+        }
+        // Verifica se o CPF já está sendo utilizado
+        Optional<Pessoa> pessoaExistente = pessoaRepository.findByCpf(pessoa.getCpf());
+        if (pessoaExistente.isPresent()) {
+            throw new IllegalArgumentException("CPF já cadastrado no sistema.");
+        }
+    }
 }

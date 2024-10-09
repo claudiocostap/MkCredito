@@ -1,12 +1,8 @@
 package com.makarios.mkcredito.resource;
 
-import com.makarios.mkcredito.event.RecursoCriadoEvent;
 import com.makarios.mkcredito.model.Pessoa;
-import com.makarios.mkcredito.repository.PessoaRepository;
 import com.makarios.mkcredito.service.PessoaService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,54 +11,60 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/pessoas")
+@RequestMapping("/api/pessoas")
 public class PessoaResource {
-
-    @Autowired
-    private PessoaRepository pessoaRepository;
 
     @Autowired
     private PessoaService pessoaService;
 
-    @Autowired
-    private ApplicationEventPublisher publisher;
-
-    @PostMapping
-    public ResponseEntity<Pessoa> criar(@RequestBody Pessoa pessoa, HttpServletResponse response) {
-        Pessoa pessoaSalva = pessoaRepository.save(pessoa);
-
-        publisher.publishEvent(new RecursoCriadoEvent(this, response, pessoaSalva.getCodigo()));
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(pessoaSalva);
-    }
-
+    // Retorna a lista de todas as pessoas
     @GetMapping
-    public List<Pessoa> listar() {
-        return pessoaRepository.findAll();
+    public ResponseEntity<List<Pessoa>> listarTodas() {
+        List<Pessoa> pessoas = pessoaService.buscarTodas();
+        if (pessoas.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(pessoas);
     }
 
-    @GetMapping("/{codigo}")
-    public ResponseEntity<Pessoa> buscarPeloCodigo(@PathVariable Long codigo) {
-        Optional<Pessoa> pessoa = pessoaRepository.findById(codigo);
-        return pessoa.isPresent() ? ResponseEntity.ok(pessoa.get()) : ResponseEntity.notFound().build();
+    // Busca uma pessoa específica pelo ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Pessoa> buscarPorId(@PathVariable Long id) {
+        Optional<Pessoa> pessoa = pessoaService.buscarPorId(id);
+        return pessoa.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @DeleteMapping("/{codigo}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remover(@PathVariable Long codigo) {
-        this.pessoaRepository.deleteById(codigo);
+    // Cria uma nova pessoa no sistema
+    @PostMapping
+    public ResponseEntity<Pessoa> criar(@RequestBody Pessoa pessoa) {
+        Pessoa novaPessoa = pessoaService.salvar(pessoa);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaPessoa);
     }
 
-    @PutMapping("/{codigo}")
-    public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @RequestBody Pessoa pessoa) {
-        Pessoa pessoaSalva = pessoaService.atualizar(codigo, pessoa);
-        return ResponseEntity.ok(pessoaSalva);
+    // Atualiza uma pessoa existente
+    @PutMapping("/{id}")
+    public ResponseEntity<Pessoa> atualizar(@PathVariable Long id, @RequestBody Pessoa pessoa) {
+        Optional<Pessoa> pessoaExistente = pessoaService.buscarPorId(id);
+
+        if (!pessoaExistente.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Pessoa pessoaAtualizada = pessoaService.atualizar(id, pessoa);
+        return ResponseEntity.ok(pessoaAtualizada);
     }
 
-    @PutMapping("/{codigo}/ativo")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void atualizarPropriedadeAtivo(@PathVariable Long codigo, @RequestBody Boolean ativo) {
-        pessoaService.atualizarPropriedadeAtivo(codigo, ativo);
-    }
+    // Remove uma pessoa do sistema
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> remover(@PathVariable Long id) {
+        Optional<Pessoa> pessoaExistente = pessoaService.buscarPorId(id);
 
+        if (!pessoaExistente.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        pessoaService.remover(id);
+        return ResponseEntity.noContent().build();
+    }
 }
