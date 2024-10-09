@@ -1,6 +1,9 @@
 package com.makarios.mkcredito.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,20 +14,21 @@ public class PontoEletronico {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "funcionario_id", nullable = false)
     private Funcionario funcionario;
 
-    @Column(name = "data_hora_entrada", nullable = false)
+    @Column(name = "data_hora_entrada", nullable = false, updatable = false)
+    @CreationTimestamp
     private LocalDateTime dataHoraEntrada;
 
     @Column(name = "data_hora_saida")
+    @UpdateTimestamp
     private LocalDateTime dataHoraSaida;
 
     private String justificativa;
 
     // Getters e Setters
-
     public Long getId() {
         return id;
     }
@@ -66,7 +70,6 @@ public class PontoEletronico {
     }
 
     // HashCode e Equals
-
     @Override
     public int hashCode() {
         final int prime = 31;
