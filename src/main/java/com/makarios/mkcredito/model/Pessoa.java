@@ -6,37 +6,40 @@ import org.antlr.v4.runtime.misc.NotNull;
 import java.time.LocalDate;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "pessoa")
-public class Pessoa {
-
+public abstract class Pessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long codigo;
+    private Long id;
 
     @NotNull
+    @Column(nullable = false)
     private String nome;
 
     @NotNull
+    @Column(nullable = false)
     private String cpf;
 
     private String rg;
 
     @NotNull
-    @Column(name = "data_nascimento")
+    @Column(name = "data_nascimento", nullable = false)
     private LocalDate dataNascimento;
 
     @Embedded
     private Endereco endereco;
 
     @NotNull
+    @Column(nullable = false)
     private Boolean ativo;
 
-    public Long getCodigo() {
-        return codigo;
+    public Long getId() {  // Renomeado para getId
+        return id;
     }
 
-    public void setCodigo(Long codigo) {
-        this.codigo = codigo;
+    public void setId(Long id) {  // Renomeado para setId
+        this.id = id;
     }
 
     public String getNome() {
@@ -91,7 +94,7 @@ public class Pessoa {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 
@@ -104,13 +107,11 @@ public class Pessoa {
         if (getClass() != obj.getClass())
             return false;
         Pessoa other = (Pessoa) obj;
-        if (codigo == null) {
-            if (other.codigo != null)
+        if (id == null) {
+            if (other.id != null)
                 return false;
-        } else if (!codigo.equals(other.codigo))
+        } else if (!id.equals(other.id))
             return false;
         return true;
     }
-
-
 }

@@ -1,11 +1,9 @@
 package com.makarios.mkcredito.model;
 
-
 import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Endereco {
-
     private String logradouro;
     private String numero;
     private String complemento;
@@ -14,6 +12,7 @@ public class Endereco {
     private String cidade;
     private String estado;
 
+    // Getters e Setters
     public String getLogradouro() {
         return logradouro;
     }

@@ -1,31 +1,23 @@
 package com.makarios.mkcredito.model;
 
 import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "funcionario")
 public class Funcionario extends Pessoa {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @NotNull
+    @Column(nullable = false)
     private String cargo;
 
-    @NotNull
+    @Column(nullable = false)
     private BigDecimal salario;
 
-    @NotNull
-    @Column(name = "data_contratacao")
+    @Column(name = "data_contratacao", nullable = false)
     private LocalDate dataContratacao;
 
     // Getters e Setters
-
     public String getCargo() {
         return cargo;
     }
@@ -50,29 +42,26 @@ public class Funcionario extends Pessoa {
         this.dataContratacao = dataContratacao;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    // HashCode e Equals com base no código (herdado de Pessoa)
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!super.equals(o)) return false;
+        Funcionario that = (Funcionario) o;
+        return Objects.equals(getId(), that.getId()) &&
+                Objects.equals(cargo, that.cargo) &&
+                Objects.equals(salario, that.salario) &&
+                Objects.equals(dataContratacao, that.dataContratacao);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), cargo, salario, dataContratacao);
     }
 
     @Override
     public String toString() {
         return "Funcionario{" +
-                "codigo=" + getCodigo() +
+                "codigo=" + getId() +  // Atualizado para getId
                 ", nome='" + getNome() + '\'' +
                 ", cpf='" + getCpf() + '\'' +
                 ", cargo='" + cargo + '\'' +
