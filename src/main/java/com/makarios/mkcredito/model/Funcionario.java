@@ -10,6 +10,10 @@ import java.time.LocalDate;
 @Table(name = "funcionario")
 public class Funcionario extends Pessoa {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NotNull
     private String cargo;
 
@@ -44,6 +48,14 @@ public class Funcionario extends Pessoa {
 
     public void setDataContratacao(LocalDate dataContratacao) {
         this.dataContratacao = dataContratacao;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     // HashCode e Equals com base no código (herdado de Pessoa)

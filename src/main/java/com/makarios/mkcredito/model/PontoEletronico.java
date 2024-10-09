@@ -14,8 +14,8 @@ public class PontoEletronico {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "funcionario_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "funcionario_id")
     private Funcionario funcionario;
 
     @Column(name = "data_hora_entrada", nullable = false, updatable = false)
