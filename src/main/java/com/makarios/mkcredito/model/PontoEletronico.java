@@ -95,14 +95,4 @@ public class PontoEletronico {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "PontoEletronico{" +
-                "id=" + id +
-                ", funcionario=" + funcionario.getNome() +
-                ", dataHoraEntrada=" + dataHoraEntrada +
-                ", dataHoraSaida=" + dataHoraSaida +
-                ", justificativa='" + justificativa + '\'' +
-                '}';
-    }
 }

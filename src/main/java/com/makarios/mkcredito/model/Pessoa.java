@@ -6,9 +6,8 @@ import org.antlr.v4.runtime.misc.NotNull;
 import java.time.LocalDate;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "pessoa")
-public abstract class Pessoa {
+public class Pessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,6 +22,10 @@ public abstract class Pessoa {
 
     private String rg;
 
+    private String email;
+
+    private String celular;
+
     @NotNull
     @Column(name = "data_nascimento", nullable = false)
     private LocalDate dataNascimento;
@@ -31,7 +34,6 @@ public abstract class Pessoa {
     private Endereco endereco;
 
     @NotNull
-    @Column(nullable = false)
     private Boolean ativo;
 
     public Long getId() {  // Renomeado para getId
@@ -40,6 +42,22 @@ public abstract class Pessoa {
 
     public void setId(Long id) {  // Renomeado para setId
         this.id = id;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getCelular() {
+        return celular;
+    }
+
+    public void setCelular(String celular) {
+        this.celular = celular;
     }
 
     public String getNome() {
@@ -65,6 +83,7 @@ public abstract class Pessoa {
     public void setRg(String rg) {
         this.rg = rg;
     }
+
 
     public LocalDate getDataNascimento() {
         return dataNascimento;

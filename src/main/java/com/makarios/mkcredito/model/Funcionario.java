@@ -7,7 +7,15 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "funcionario")
-public class Funcionario extends Pessoa {
+public class Funcionario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "pessoa_id")
+    private Pessoa pessoa;
+
     @Column(nullable = false)
     private String cargo;
 
@@ -16,6 +24,14 @@ public class Funcionario extends Pessoa {
 
     @Column(name = "data_contratacao", nullable = false)
     private LocalDate dataContratacao;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     // Getters e Setters
     public String getCargo() {
@@ -42,6 +58,14 @@ public class Funcionario extends Pessoa {
         this.dataContratacao = dataContratacao;
     }
 
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,15 +82,4 @@ public class Funcionario extends Pessoa {
         return Objects.hash(super.hashCode(), cargo, salario, dataContratacao);
     }
 
-    @Override
-    public String toString() {
-        return "Funcionario{" +
-                "codigo=" + getId() +  // Atualizado para getId
-                ", nome='" + getNome() + '\'' +
-                ", cpf='" + getCpf() + '\'' +
-                ", cargo='" + cargo + '\'' +
-                ", salario=" + salario +
-                ", dataContratacao=" + dataContratacao +
-                '}';
-    }
 }
