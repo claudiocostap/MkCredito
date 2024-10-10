@@ -11,6 +11,10 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @OneToOne
+    @JoinColumn(name = "funcionario_id")
+    private Funcionario funcionario;
+
     @NotNull
     private String nome;
 
@@ -19,9 +23,18 @@ public class Usuario {
 
     public Usuario() {}
 
-    public Usuario(String nome, String email) {
+    public Usuario(String nome, String email, Funcionario funcionario) {
         this.nome = nome;
         this.email = email;
+        this.funcionario = funcionario;
+    }
+
+    public Funcionario getFuncionario() {
+        return funcionario;
+    }
+
+    public void setFuncionario(Funcionario funcionario) {
+        this.funcionario = funcionario;
     }
 
     public void setId(long id) {
