@@ -8,6 +8,7 @@ import com.makarios.mkcredito.repository.PontoEletronicoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,6 +20,24 @@ public class PontoEletronicoService {
 
     @Autowired
     private FuncionarioRepository funcionarioRepository;
+
+
+    public Duration calcularHorasTrabalhadas(PontoEletronico ponto) {
+        LocalDateTime entrada = ponto.getDataHoraEntrada();
+        LocalDateTime saida = ponto.getDataHoraSaida();
+
+        if (entrada != null && saida != null) {
+            return Duration.between(entrada, saida);
+        }
+        return Duration.ZERO;
+    }
+
+    public Duration calcularHorasExtras(PontoEletronico ponto) {
+        Duration horasTrabalhadas = calcularHorasTrabalhadas(ponto);
+        Duration horasRegulamentares = Duration.ofHours(8);
+
+        return horasTrabalhadas.minus(horasRegulamentares).isNegative() ? Duration.ZERO : horasTrabalhadas.minus(horasRegulamentares);
+    }
 
     // Registrar entrada de um funcionário
     public PontoEletronico registrarEntrada(Long funcionarioId) {

@@ -38,8 +38,12 @@ public class PessoaResource {
     // Cria uma nova pessoa no sistema
     @PostMapping
     public ResponseEntity<Pessoa> criar(@RequestBody Pessoa pessoa) {
+        Optional<Pessoa> pessoaExistente = pessoaService.buscarPorCpf(pessoa.getCpf());
+        if (!pessoaExistente.isPresent()){
         Pessoa novaPessoa = pessoaService.salvar(pessoa);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaPessoa);
+        }
+        else return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).build();
     }
 
     // Atualiza uma pessoa existente

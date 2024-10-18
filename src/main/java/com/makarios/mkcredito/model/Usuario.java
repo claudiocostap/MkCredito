@@ -12,8 +12,8 @@ public class Usuario {
     private long id;
 
     @OneToOne
-    @JoinColumn(name = "funcionario_id")
-    private Funcionario funcionario;
+    @JoinColumn(name = "pessoa_id")
+    private Pessoa pessoa;
 
     @NotNull
     private String nome;
@@ -23,18 +23,18 @@ public class Usuario {
 
     public Usuario() {}
 
-    public Usuario(String nome, String email, Funcionario funcionario) {
+    public Usuario(String nome, String email, Pessoa pessoa) {
         this.nome = nome;
         this.email = email;
-        this.funcionario = funcionario;
+        this.pessoa = pessoa;
     }
 
-    public Funcionario getFuncionario() {
-        return funcionario;
+    public Pessoa getPessoa() {
+        return pessoa;
     }
 
-    public void setFuncionario(Funcionario funcionario) {
-        this.funcionario = funcionario;
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
     }
 
     public void setId(long id) {

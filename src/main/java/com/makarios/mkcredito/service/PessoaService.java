@@ -28,7 +28,7 @@ public class PessoaService {
     // Salvar uma nova pessoa
     @Transactional
     public Pessoa salvar(Pessoa pessoa) {
-        validarPessoa(pessoa);
+        validarPessoaAoSalvar(pessoa);
         return pessoaRepository.save(pessoa);
     }
 
@@ -40,6 +40,8 @@ public class PessoaService {
         if (!pessoaExistente.isPresent()) {
             throw new IllegalArgumentException("Pessoa com ID " + id + " não encontrada.");
         }
+
+        validarPessoaAoAtualizar(id, pessoaAtualizada);
 
         // Mantém o ID da pessoa original para garantir que estamos atualizando o registro correto
         Pessoa pessoa = pessoaExistente.get();
@@ -59,7 +61,7 @@ public class PessoaService {
         Optional<Pessoa> pessoaExistente = pessoaRepository.findById(id);
 
         if (pessoaExistente.isEmpty()) {
-            throw new IllegalArgumentException("Pessoa com ID " + id + " não encontrada.");
+            throw new IllegalArgumentException("Pessoa com ID " + "id não encontrada.");
         }
 
         pessoaRepository.deleteById(id);
@@ -75,8 +77,8 @@ public class PessoaService {
         return pessoaRepository.findByNomeContainingIgnoreCase(nome);
     }
 
-    // Validação básica antes de salvar/atualizar a pessoa
-    private void validarPessoa(Pessoa pessoa) {
+    // Validação ao salvar uma nova pessoa
+    private void validarPessoaAoSalvar(Pessoa pessoa) {
         if (pessoa.getCpf() == null || pessoa.getCpf().isEmpty()) {
             throw new IllegalArgumentException("CPF é obrigatório.");
         }
@@ -84,10 +86,28 @@ public class PessoaService {
         if (pessoa.getNome() == null || pessoa.getNome().isEmpty()) {
             throw new IllegalArgumentException("Nome é obrigatório.");
         }
+
         // Verifica se o CPF já está sendo utilizado
         Optional<Pessoa> pessoaExistente = pessoaRepository.findByCpf(pessoa.getCpf());
         if (pessoaExistente.isPresent()) {
             throw new IllegalArgumentException("CPF já cadastrado no sistema.");
+        }
+    }
+
+    // Validação ao atualizar uma pessoa existente
+    private void validarPessoaAoAtualizar(Long id, Pessoa pessoaAtualizada) {
+        if (pessoaAtualizada.getCpf() == null || pessoaAtualizada.getCpf().isEmpty()) {
+            throw new IllegalArgumentException("CPF é obrigatório.");
+        }
+
+        if (pessoaAtualizada.getNome() == null || pessoaAtualizada.getNome().isEmpty()) {
+            throw new IllegalArgumentException("Nome é obrigatório.");
+        }
+
+        // Verifica se o CPF está sendo utilizado por outra pessoa (diferente da pessoa sendo atualizada)
+        Optional<Pessoa> pessoaComMesmoCpf = pessoaRepository.findByCpf(pessoaAtualizada.getCpf());
+        if (pessoaComMesmoCpf.isPresent() && !pessoaComMesmoCpf.get().getId().equals(id)) {
+            throw new IllegalArgumentException("CPF já está sendo utilizado por outra pessoa.");
         }
     }
 }
