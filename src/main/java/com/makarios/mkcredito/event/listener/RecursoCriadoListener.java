@@ -16,14 +16,14 @@ public class RecursoCriadoListener implements ApplicationListener<RecursoCriadoE
     @Override
     public void onApplicationEvent(RecursoCriadoEvent recursoCriadoEvent) {
         HttpServletResponse response = recursoCriadoEvent.getResponse();
-        Long codigo = recursoCriadoEvent.getCodigo();
+        Long id = recursoCriadoEvent.getId();
 
-        adicionarHeaderLocation(response, codigo);
+        adicionarHeaderLocation(response, id);
     }
 
-    private void adicionarHeaderLocation(HttpServletResponse response, Long codigo) {
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
-                .buildAndExpand(codigo).toUri();
+    private void adicionarHeaderLocation(HttpServletResponse response, Long id) {
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
+                .buildAndExpand(id).toUri();
         response.setHeader("Location", uri.toASCIIString());
     }
 
