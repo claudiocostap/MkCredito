@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Long> {
 
+    Page<Funcionario> findByPessoaId(Long pessoaId, Pageable pageable);
+
     // 🔍 Busca um funcionário pelo cargo (sem considerar maiúsculas ou minúsculas)
     List<Funcionario> findByCargoIgnoreCase(String cargo);
 

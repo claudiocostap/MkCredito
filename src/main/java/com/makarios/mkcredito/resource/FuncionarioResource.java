@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@RequestMapping("/funcionarios")
+@RequestMapping("/api/funcionarios")
 public class FuncionarioResource {
 
     private final FuncionarioService funcionarioService;
