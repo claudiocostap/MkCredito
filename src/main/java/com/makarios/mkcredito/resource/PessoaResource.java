@@ -1,14 +1,16 @@
 package com.makarios.mkcredito.resource;
 
+import com.makarios.mkcredito.exceptionhandler.PessoaNotFoundException;
 import com.makarios.mkcredito.model.Pessoa;
 import com.makarios.mkcredito.service.PessoaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/pessoas")
@@ -17,58 +19,35 @@ public class PessoaResource {
     @Autowired
     private PessoaService pessoaService;
 
-    // Retorna a lista de todas as pessoas
+    // 🔹 Listar todas as pessoas com paginação
     @GetMapping
-    public ResponseEntity<List<Pessoa>> listarTodas() {
-        List<Pessoa> pessoas = pessoaService.buscarTodas();
-        if (pessoas.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(pessoas);
+    public ResponseEntity<Page<Pessoa>> listarTodas(Pageable pageable) {
+        Page<Pessoa> pessoas = pessoaService.buscarTodas(pageable);
+        return pessoas.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(pessoas);
     }
 
-    // Busca uma pessoa específica pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<Pessoa> buscarPorId(@PathVariable Long id) {
-        Optional<Pessoa> pessoa = pessoaService.buscarPorId(id);
-        return pessoa.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        return pessoaService.buscarPorId(id)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() -> new PessoaNotFoundException(id));
     }
 
-    // Cria uma nova pessoa no sistema
     @PostMapping
-    public ResponseEntity<Pessoa> criar(@RequestBody Pessoa pessoa) {
-        Optional<Pessoa> pessoaExistente = pessoaService.buscarPorCpf(pessoa.getCpf());
-        if (!pessoaExistente.isPresent()){
+    public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa) {
         Pessoa novaPessoa = pessoaService.salvar(pessoa);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaPessoa);
-        }
-        else return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).build();
     }
 
-    // Atualiza uma pessoa existente
     @PutMapping("/{id}")
-    public ResponseEntity<Pessoa> atualizar(@PathVariable Long id, @RequestBody Pessoa pessoa) {
-        Optional<Pessoa> pessoaExistente = pessoaService.buscarPorId(id);
-
-        if (!pessoaExistente.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
+    public ResponseEntity<Pessoa> atualizar(@PathVariable Long id, @Valid @RequestBody Pessoa pessoa) {
         Pessoa pessoaAtualizada = pessoaService.atualizar(id, pessoa);
         return ResponseEntity.ok(pessoaAtualizada);
     }
 
-    // Remove uma pessoa do sistema
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> remover(@PathVariable Long id) {
-        Optional<Pessoa> pessoaExistente = pessoaService.buscarPorId(id);
-
-        if (!pessoaExistente.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void remover(@PathVariable Long id) {
         pessoaService.remover(id);
-        return ResponseEntity.noContent().build();
     }
 }
