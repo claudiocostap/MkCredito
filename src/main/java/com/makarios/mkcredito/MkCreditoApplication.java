@@ -9,5 +9,4 @@ public class MkCreditoApplication {
     public static void main(String[] args) {
         SpringApplication.run(MkCreditoApplication.class, args);
     }
-//novo commit
 }
