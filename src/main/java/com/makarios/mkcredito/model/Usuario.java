@@ -1,7 +1,13 @@
 package com.makarios.mkcredito.model;
 
-import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "usuario")

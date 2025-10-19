@@ -1,15 +1,28 @@
 package com.makarios.mkcredito.resource;
 
-import com.makarios.mkcredito.exceptionhandler.PessoaNotFoundException;
-import com.makarios.mkcredito.model.Pessoa;
-import com.makarios.mkcredito.service.PessoaService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.makarios.mkcredito.event.RecursoCriadoEvent;
+import com.makarios.mkcredito.exceptionhandler.PessoaNotFoundException;
+import com.makarios.mkcredito.model.Pessoa;
+import com.makarios.mkcredito.service.PessoaService;
+
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -18,6 +31,9 @@ public class PessoaResource {
 
     @Autowired
     private PessoaService pessoaService;
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
 
     // 🔹 Listar todas as pessoas com paginação
     @GetMapping
@@ -34,9 +50,11 @@ public class PessoaResource {
     }
 
     @PostMapping
-    public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa) {
+    public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
         Pessoa novaPessoa = pessoaService.salvar(pessoa);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novaPessoa);
+
+        publisher.publishEvent(new RecursoCriadoEvent(this, response, novaPessoa.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaPessoa); // O listener já define o status, mas mantê-lo aqui é uma boa prática.
     }
 
     @PutMapping("/{id}")

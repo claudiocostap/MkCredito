@@ -1,12 +1,12 @@
 package com.makarios.mkcredito.service;
 
-import com.makarios.mkcredito.model.PontoEletronico;
-import com.makarios.mkcredito.repository.PontoEletronicoRepository;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import com.makarios.mkcredito.model.PontoEletronico;
+import com.makarios.mkcredito.repository.PontoEletronicoRepository;
 
 @Service
 public class PontoEletronicoService {

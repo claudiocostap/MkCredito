@@ -2,28 +2,27 @@ package com.makarios.mkcredito.event.listener;
 
 import java.net.URI;
 
-
-import com.makarios.mkcredito.event.RecursoCriadoEvent;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.makarios.mkcredito.event.RecursoCriadoEvent;
+
+import jakarta.servlet.http.HttpServletResponse;
+
 
 @Component
-public class RecursoCriadoListener implements ApplicationListener<RecursoCriadoEvent> {
+public class RecursoCriadoListener {
 
-    @Override
-    public void onApplicationEvent(RecursoCriadoEvent recursoCriadoEvent) {
+    @EventListener
+    public void handleRecursoCriadoEvent(RecursoCriadoEvent recursoCriadoEvent) {
         HttpServletResponse response = recursoCriadoEvent.getResponse();
         Long id = recursoCriadoEvent.getId();
 
-        adicionarHeaderLocation(response, id);
-    }
-
-    private void adicionarHeaderLocation(HttpServletResponse response, Long id) {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{id}")
                 .buildAndExpand(id).toUri();
+        response.setStatus(HttpStatus.CREATED.value());
         response.setHeader("Location", uri.toASCIIString());
     }
 

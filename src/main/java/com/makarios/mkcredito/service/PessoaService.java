@@ -1,9 +1,6 @@
 package com.makarios.mkcredito.service;
 
-import com.makarios.mkcredito.exceptionhandler.BusinessException;
-import com.makarios.mkcredito.exceptionhandler.PessoaNotFoundException;
-import com.makarios.mkcredito.model.Pessoa;
-import com.makarios.mkcredito.repository.PessoaRepository;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,7 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import com.makarios.mkcredito.exceptionhandler.BusinessException;
+import com.makarios.mkcredito.exceptionhandler.PessoaNotFoundException;
+import com.makarios.mkcredito.model.Pessoa;
+import com.makarios.mkcredito.repository.PessoaRepository;
 
 @Service
 public class PessoaService {
@@ -30,6 +30,7 @@ public class PessoaService {
     @Transactional
     public Pessoa salvar(Pessoa pessoa) {
         validarPessoaAoSalvar(pessoa);
+        pessoa.setId(null); // Garante que estamos criando uma nova pessoa
         return pessoaRepository.save(pessoa);
     }
 

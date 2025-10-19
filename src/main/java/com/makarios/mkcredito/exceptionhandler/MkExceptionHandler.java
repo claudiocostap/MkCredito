@@ -77,6 +77,16 @@ public class MkExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    // Handler para Pessoa não encontrada
+    @ExceptionHandler({ PessoaNotFoundException.class })
+    public ResponseEntity<Object> handlePessoaNotFoundException(PessoaNotFoundException ex, WebRequest request) {
+        String mensagemUsuario = messageSource.getMessage("recurso.nao-encontrado", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        logger.warn("Recurso Pessoa não encontrado: {}", mensagemDesenvolvedor, ex);
+        return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
     // Captura qualquer outra exceção não tratada
     @ExceptionHandler({ Exception.class })
     public ResponseEntity<Object> handleGeneralException(Exception ex, WebRequest request) {
