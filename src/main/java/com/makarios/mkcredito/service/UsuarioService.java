@@ -62,7 +62,7 @@ public class UsuarioService {
             throw new BusinessException("O e-mail do usuário é obrigatório");
         }
         Optional<Usuario> usuarioComMesmoEmail = usuarioRepository.findByEmail(usuario.getEmail());
-        if (usuarioComMesmoEmail.isPresent() && (id == null || !usuarioComMesmoEmail.get().getId().equals(id))) {
+        if (usuarioComMesmoEmail.isPresent() && (id == null || usuarioComMesmoEmail.get().getId() != id)) {
             throw new BusinessException("E-mail já está sendo utilizado por outro usuário.");
         }
     }
