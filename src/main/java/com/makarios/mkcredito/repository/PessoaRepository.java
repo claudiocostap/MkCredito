@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
 
-    // 🔹 Buscar uma pessoa pelo CPF
-    Optional<Pessoa> findByCpf(String cpf);
+    // 🔹 Buscar uma pessoa pelo Documento
+    Optional<Pessoa> findByDocumento(String documento);
 
     // 🔹 Buscar pessoas pelo nome (ou parte do nome) com suporte a paginação
     Page<Pessoa> findByNomeContainingIgnoreCase(String nome, Pageable pageable);

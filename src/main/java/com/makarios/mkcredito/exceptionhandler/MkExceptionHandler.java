@@ -67,7 +67,7 @@ public class MkExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
-    // Exceção de negócio personalizada para CPF duplicado
+    // Exceção de negócio personalizada para Documento duplicado
     @ExceptionHandler({ IllegalArgumentException.class })
     public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
         String mensagemUsuario = ex.getMessage(); // Exibe a mensagem de erro específica para o usuário

@@ -24,7 +24,7 @@ public class Pessoa {
 
     @NotNull
     @Column(nullable = false)
-    private String cpf;
+    private String documento;
 
     private String rg;
 
@@ -74,12 +74,12 @@ public class Pessoa {
         this.nome = nome;
     }
 
-    public String getCpf() {
-        return cpf;
+    public String getDocumento() {
+        return documento;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setDocumento(String documento) {
+        this.documento = documento;
     }
 
     public String getRg() {

@@ -42,7 +42,7 @@ public class PessoaService {
         validarPessoaAoAtualizar(id, pessoaAtualizada);
 
         pessoa.setNome(pessoaAtualizada.getNome());
-        pessoa.setCpf(pessoaAtualizada.getCpf());
+        pessoa.setDocumento(pessoaAtualizada.getDocumento());
         pessoa.setRg(pessoaAtualizada.getRg());
         pessoa.setDataNascimento(pessoaAtualizada.getDataNascimento());
         pessoa.setEndereco(pessoaAtualizada.getEndereco());
@@ -59,8 +59,8 @@ public class PessoaService {
         pessoaRepository.deleteById(id);
     }
 
-    public Optional<Pessoa> buscarPorCpf(String cpf) {
-        return pessoaRepository.findByCpf(cpf);
+    public Optional<Pessoa> buscarPorDocumento(String documento) {
+        return pessoaRepository.findByDocumento(documento);
     }
 
     public Page<Pessoa> buscarPorNome(String nome, Pageable pageable) {
@@ -68,31 +68,31 @@ public class PessoaService {
     }
 
     private void validarPessoaAoSalvar(Pessoa pessoa) {
-        if (pessoa.getCpf() == null || pessoa.getCpf().isEmpty()) {
-            throw new BusinessException("CPF é obrigatório.");
+        if (pessoa.getDocumento() == null || pessoa.getDocumento().isEmpty()) {
+            throw new BusinessException("Documento é obrigatório.");
         }
 
         if (pessoa.getNome() == null || pessoa.getNome().isEmpty()) {
             throw new BusinessException("Nome é obrigatório.");
         }
 
-        if (pessoaRepository.findByCpf(pessoa.getCpf()).isPresent()) {
-            throw new BusinessException("CPF já cadastrado no sistema.");
+        if (pessoaRepository.findByDocumento(pessoa.getDocumento()).isPresent()) {
+            throw new BusinessException("Documento já cadastrado no sistema.");
         }
     }
 
     private void validarPessoaAoAtualizar(Long id, Pessoa pessoaAtualizada) {
-        if (pessoaAtualizada.getCpf() == null || pessoaAtualizada.getCpf().isEmpty()) {
-            throw new BusinessException("CPF é obrigatório.");
+        if (pessoaAtualizada.getDocumento() == null || pessoaAtualizada.getDocumento().isEmpty()) {
+            throw new BusinessException("Documento é obrigatório.");
         }
 
         if (pessoaAtualizada.getNome() == null || pessoaAtualizada.getNome().isEmpty()) {
             throw new BusinessException("Nome é obrigatório.");
         }
 
-        Optional<Pessoa> pessoaComMesmoCpf = pessoaRepository.findByCpf(pessoaAtualizada.getCpf());
-        if (pessoaComMesmoCpf.isPresent() && !pessoaComMesmoCpf.get().getId().equals(id)) {
-            throw new BusinessException("CPF já está sendo utilizado por outra pessoa.");
+        Optional<Pessoa> pessoaComMesmoDocumento = pessoaRepository.findByDocumento(pessoaAtualizada.getDocumento());
+        if (pessoaComMesmoDocumento.isPresent() && !pessoaComMesmoDocumento.get().getId().equals(id)) {
+            throw new BusinessException("Documento já está sendo utilizado por outra pessoa.");
         }
     }
 }
