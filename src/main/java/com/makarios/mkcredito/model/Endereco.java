@@ -1,15 +1,46 @@
 package com.makarios.mkcredito.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Embeddable
 public class Endereco {
+
+    @NotBlank
+    @Size(max = 150)
+    @Column(length = 150)
     private String logradouro;
+
+    @NotBlank
+    @Size(max = 20)
+    @Column(length = 20)
     private String numero;
+
+    @Size(max = 100)
+    @Column(length = 100)
     private String complemento;
+
+    @NotBlank
+    @Size(max = 100)
+    @Column(length = 100)
     private String bairro;
+
+    @NotBlank
+    @Pattern(regexp = "\\d{5}-\\d{3}", message = "CEP deve estar no formato 99999-999")
+    @Column(length = 9)
     private String cep;
+
+    @NotBlank
+    @Size(max = 100)
+    @Column(length = 100)
     private String cidade;
+
+    @NotBlank
+    @Size(min = 2, max = 2)
+    @Column(length = 2)
     private String estado;
 
     // Getters e Setters

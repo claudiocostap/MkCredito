@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -33,17 +32,31 @@ public class PontoEletronicoResource {
         return ResponseEntity.ok(pontoEletronico);
     }
 
-    // Criar um novo ponto eletrônico
-    @PostMapping
-    public ResponseEntity<PontoEletronico> salvar(@Valid @RequestBody PontoEletronico pontoEletronico) {
-        PontoEletronico novoPontoEletronico = pontoEletronicoService.salvar(pontoEletronico);
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoPontoEletronico);
+    // Listar pontos por funcionário
+    @GetMapping("/funcionario/{funcionarioId}")
+    public ResponseEntity<List<PontoEletronico>> listarPorFuncionario(@PathVariable Long funcionarioId) {
+        List<PontoEletronico> pontos = pontoEletronicoService.listarPorFuncionario(funcionarioId);
+        return ResponseEntity.ok(pontos);
     }
 
-    // Atualizar um ponto eletrônico existente
-    @PutMapping("/{id}")
-    public ResponseEntity<PontoEletronico> atualizar(@PathVariable Long id, @Valid @RequestBody PontoEletronico pontoEletronico) {
-        PontoEletronico pontoAtualizado = pontoEletronicoService.atualizar(id, pontoEletronico);
+    // Registrar entrada
+    @PostMapping("/entrada/{funcionarioId}")
+    public ResponseEntity<PontoEletronico> registrarEntrada(@PathVariable Long funcionarioId) {
+        PontoEletronico novoPonto = pontoEletronicoService.registrarEntrada(funcionarioId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoPonto);
+    }
+
+    // Registrar saída
+    @PostMapping("/saida/{funcionarioId}")
+    public ResponseEntity<PontoEletronico> registrarSaida(@PathVariable Long funcionarioId) {
+        PontoEletronico pontoAtualizado = pontoEletronicoService.registrarSaida(funcionarioId);
+        return ResponseEntity.ok(pontoAtualizado);
+    }
+
+    // Adicionar justificativa
+    @PutMapping("/{id}/justificativa")
+    public ResponseEntity<PontoEletronico> adicionarJustificativa(@PathVariable Long id, @RequestBody String justificativa) {
+        PontoEletronico pontoAtualizado = pontoEletronicoService.adicionarJustificativa(id, justificativa);
         return ResponseEntity.ok(pontoAtualizado);
     }
 

@@ -2,6 +2,8 @@ package com.makarios.mkcredito.model;
 
 import java.time.LocalDate;
 
+import org.hibernate.validator.constraints.br.CPF;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -9,7 +11,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "pessoa")
@@ -18,35 +24,41 @@ public class Pessoa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotBlank
+    @Size(min = 3, max = 100)
     @Column(nullable = false)
     private String nome;
 
-    @NotNull
-    @Column(nullable = false)
+    @CPF
+    @NotBlank
+    @Column(nullable = false, unique = true)
     private String documento;
 
     private String rg;
 
+    @Email
+    @Column(length = 100)
     private String email;
 
+    @Column(length = 20)
     private String celular;
 
     @NotNull
+    @Past
     @Column(name = "data_nascimento", nullable = false)
     private LocalDate dataNascimento;
 
     @Embedded
     private Endereco endereco;
 
-    @NotNull
-    private Boolean ativo;
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private Boolean ativo = true;
 
-    public Long getId() {  // Renomeado para getId
+    public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {  // Renomeado para setId
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -1,8 +1,9 @@
 package com.makarios.mkcredito.model;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
@@ -14,19 +15,29 @@ public class PontoEletronico {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @NotNull(message = "O funcionário é obrigatório.")
+    @ManyToOne(optional = false)
     @JoinColumn(name = "funcionario_id")
     private Funcionario funcionario;
 
     @Column(name = "data_hora_entrada", nullable = false, updatable = false)
-    @CreationTimestamp
     private LocalDateTime dataHoraEntrada;
 
     @Column(name = "data_hora_saida")
-    @UpdateTimestamp
     private LocalDateTime dataHoraSaida;
 
+    @Size(max = 255, message = "A justificativa deve ter no máximo 255 caracteres.")
     private String justificativa;
+
+    @PrePersist
+    protected void onCreate() {
+        dataHoraEntrada = LocalDateTime.now();
+    }
+
+    @AssertTrue(message = "A data e hora de saída deve ser posterior à data e hora de entrada.")
+    private boolean isSaidaAfterEntrada() {
+        return dataHoraSaida == null || dataHoraEntrada == null || dataHoraSaida.isAfter(dataHoraEntrada);
+    }
 
     // Getters e Setters
     public Long getId() {
