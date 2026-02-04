@@ -1,11 +1,14 @@
 package com.makarios.mkcredito.resource;
 
+import com.makarios.mkcredito.dto.ResumoPontoDTO;
 import com.makarios.mkcredito.model.PontoEletronico;
 import com.makarios.mkcredito.service.PontoEletronicoService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -41,22 +44,22 @@ public class PontoEletronicoResource {
 
     // Registrar entrada
     @PostMapping("/entrada/{funcionarioId}")
-    public ResponseEntity<PontoEletronico> registrarEntrada(@PathVariable Long funcionarioId) {
-        PontoEletronico novoPonto = pontoEletronicoService.registrarEntrada(funcionarioId);
+    public ResponseEntity<PontoEletronico> registrarEntrada(@PathVariable Long funcionarioId, @RequestParam Long usuarioId) {
+        PontoEletronico novoPonto = pontoEletronicoService.registrarEntrada(funcionarioId, usuarioId);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoPonto);
     }
 
     // Registrar saída
     @PostMapping("/saida/{funcionarioId}")
-    public ResponseEntity<PontoEletronico> registrarSaida(@PathVariable Long funcionarioId) {
-        PontoEletronico pontoAtualizado = pontoEletronicoService.registrarSaida(funcionarioId);
+    public ResponseEntity<PontoEletronico> registrarSaida(@PathVariable Long funcionarioId, @RequestParam Long usuarioId) {
+        PontoEletronico pontoAtualizado = pontoEletronicoService.registrarSaida(funcionarioId, usuarioId);
         return ResponseEntity.ok(pontoAtualizado);
     }
 
     // Adicionar justificativa
     @PutMapping("/{id}/justificativa")
-    public ResponseEntity<PontoEletronico> adicionarJustificativa(@PathVariable Long id, @RequestBody String justificativa) {
-        PontoEletronico pontoAtualizado = pontoEletronicoService.adicionarJustificativa(id, justificativa);
+    public ResponseEntity<PontoEletronico> adicionarJustificativa(@PathVariable Long id, @RequestBody String justificativa, @RequestParam Long usuarioId) {
+        PontoEletronico pontoAtualizado = pontoEletronicoService.adicionarJustificativa(id, justificativa, usuarioId);
         return ResponseEntity.ok(pontoAtualizado);
     }
 
@@ -65,5 +68,14 @@ public class PontoEletronicoResource {
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         pontoEletronicoService.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/resumo/{funcionarioId}")
+    public ResponseEntity<ResumoPontoDTO> obterResumoHoras(
+            @PathVariable Long funcionarioId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim) {
+        ResumoPontoDTO resumo = pontoEletronicoService.calcularResumoHoras(funcionarioId, inicio, fim);
+        return ResponseEntity.ok(resumo);
     }
 }

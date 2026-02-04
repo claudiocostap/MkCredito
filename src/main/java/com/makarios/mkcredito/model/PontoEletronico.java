@@ -29,6 +29,12 @@ public class PontoEletronico {
     @Size(max = 255, message = "A justificativa deve ter no máximo 255 caracteres.")
     private String justificativa;
 
+    @Column(name = "criado_por_id")
+    private Long criadoPorId;
+
+    @Column(name = "alterado_por_id")
+    private Long alteradoPorId;
+
     @PrePersist
     protected void onCreate() {
         dataHoraEntrada = LocalDateTime.now();
@@ -78,6 +84,22 @@ public class PontoEletronico {
 
     public void setJustificativa(String justificativa) {
         this.justificativa = justificativa;
+    }
+
+    public Long getCriadoPorId() {
+        return criadoPorId;
+    }
+
+    public void setCriadoPorId(Long criadoPorId) {
+        this.criadoPorId = criadoPorId;
+    }
+
+    public Long getAlteradoPorId() {
+        return alteradoPorId;
+    }
+
+    public void setAlteradoPorId(Long alteradoPorId) {
+        this.alteradoPorId = alteradoPorId;
     }
 
     // HashCode e Equals
