@@ -1,5 +1,6 @@
 package com.makarios.mkcredito.resource;
 
+import com.makarios.mkcredito.dto.LoginRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +25,12 @@ public class UsuarioResource {
 
     public UsuarioResource(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Usuario> login(@Valid @RequestBody LoginRequest loginRequest) {
+        Usuario usuario = usuarioService.login(loginRequest);
+        return ResponseEntity.ok(usuario);
     }
 
     @GetMapping("/{id}")

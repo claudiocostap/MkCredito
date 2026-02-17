@@ -1,5 +1,6 @@
 package com.makarios.mkcredito.service;
 
+import com.makarios.mkcredito.dto.LoginRequest;
 import com.makarios.mkcredito.exceptionhandler.BusinessException;
 import com.makarios.mkcredito.exceptionhandler.UsuarioNotFoundException;
 import com.makarios.mkcredito.model.Usuario;
@@ -27,6 +28,7 @@ public class UsuarioService {
     @Transactional
     public Usuario salvar(Usuario usuario) {
         validarUsuario(usuario);
+        // TODO: Hash password before saving
         return usuarioRepository.save(usuario);
     }
 
@@ -38,6 +40,10 @@ public class UsuarioService {
         usuarioExistente.setPessoa(usuarioAtualizado.getPessoa());
         usuarioExistente.setNome(usuarioAtualizado.getNome());
         usuarioExistente.setEmail(usuarioAtualizado.getEmail());
+        if (usuarioAtualizado.getSenha() != null && !usuarioAtualizado.getSenha().isEmpty()) {
+            // TODO: Hash password before saving
+            usuarioExistente.setSenha(usuarioAtualizado.getSenha());
+        }
         return usuarioRepository.save(usuarioExistente);
     }
 
@@ -65,5 +71,18 @@ public class UsuarioService {
         if (usuarioComMesmoEmail.isPresent() && (id == null || usuarioComMesmoEmail.get().getId() != id)) {
             throw new BusinessException("E-mail já está sendo utilizado por outro usuário.");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Usuario login(LoginRequest loginRequest) {
+        Usuario usuario = usuarioRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new BusinessException("Usuário ou senha inválidos"));
+
+        // TODO: Use a proper password encoder
+        if (!usuario.getSenha().equals(loginRequest.getSenha())) {
+            throw new BusinessException("Usuário ou senha inválidos");
+        }
+
+        return usuario;
     }
 }

@@ -27,12 +27,16 @@ public class Usuario {
     @NotNull
     private String email;
 
+    @NotNull
+    private String senha;
+
     public Usuario() {}
 
-    public Usuario(String nome, String email, Pessoa pessoa) {
+    public Usuario(String nome, String email, Pessoa pessoa, String senha) {
         this.nome = nome;
         this.email = email;
         this.pessoa = pessoa;
+        this.senha = senha;
     }
 
     public Pessoa getPessoa() {
@@ -65,5 +69,13 @@ public class Usuario {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 }
