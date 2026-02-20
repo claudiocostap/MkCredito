@@ -1,5 +1,6 @@
 package com.makarios.mkcredito.service;
 
+import com.makarios.mkcredito.dto.AlterarSenhaRequest;
 import com.makarios.mkcredito.dto.LoginRequest;
 import com.makarios.mkcredito.exceptionhandler.BusinessException;
 import com.makarios.mkcredito.exceptionhandler.UsuarioNotFoundException;
@@ -45,6 +46,20 @@ public class UsuarioService {
             usuarioExistente.setSenha(usuarioAtualizado.getSenha());
         }
         return usuarioRepository.save(usuarioExistente);
+    }
+
+    @Transactional
+    public void alterarSenha(Long id, AlterarSenhaRequest alterarSenhaRequest) {
+        Usuario usuario = buscarPorId(id);
+
+        // TODO: Use a proper password encoder
+        if (!usuario.getSenha().equals(alterarSenhaRequest.getSenhaAtual())) {
+            throw new BusinessException("Senha atual incorreta");
+        }
+
+        // TODO: Hash password before saving
+        usuario.setSenha(alterarSenhaRequest.getNovaSenha());
+        usuarioRepository.save(usuario);
     }
 
     @Transactional

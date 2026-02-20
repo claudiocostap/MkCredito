@@ -1,5 +1,6 @@
 package com.makarios.mkcredito.resource;
 
+import com.makarios.mkcredito.dto.AlterarSenhaRequest;
 import com.makarios.mkcredito.dto.LoginRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,12 @@ public class UsuarioResource {
     public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @Valid @RequestBody Usuario usuario) {
         Usuario usuarioAtualizado = usuarioService.atualizar(id, usuario);
         return ResponseEntity.ok(usuarioAtualizado);
+    }
+
+    @PutMapping("/{id}/senha")
+    public ResponseEntity<Void> alterarSenha(@PathVariable Long id, @Valid @RequestBody AlterarSenhaRequest alterarSenhaRequest) {
+        usuarioService.alterarSenha(id, alterarSenhaRequest);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
